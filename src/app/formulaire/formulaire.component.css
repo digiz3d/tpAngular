@@ -15,6 +15,11 @@ form input {
     height: 30px;
     border-radius: 5px;
 }
+form input[type="submit"] {
+    background-color: green;
+    color: white;
+    border: 0;
+}
 form input:last-of-type{
     margin: 0;
 }
