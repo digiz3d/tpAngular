@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BankUser } from '../models/BankUser';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-formulaire',
@@ -9,12 +10,15 @@ import { BankUser } from '../models/BankUser';
 export class FormulaireComponent implements OnInit {
 
   bankUser:BankUser = new BankUser();
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
   }
 
   onSubmit() {
-    console.log(this.bankUser);
+    this.http.post('/api/login', {login: this.bankUser.login, password: this.bankUser.password}).subscribe(data => {
+      //console.log("test");
+      console.log(data);
+    });
   }
 }
