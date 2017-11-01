@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { BankUser } from '../models/BankUser';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-formulaire',
-  templateUrl: './formulaire.component.html',
-  styleUrls: ['./formulaire.component.css']
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class FormulaireComponent implements OnInit {
+export class LoginComponent implements OnInit {
 
   bankUser:BankUser = new BankUser();
-  constructor(private http: HttpClient) { }
+  constructor(
+    private router: Router,
+    private http: HttpClient) { }
 
   ngOnInit() {
   }
@@ -19,6 +22,7 @@ export class FormulaireComponent implements OnInit {
     this.http.post('/api/login', {login: this.bankUser.login, password: this.bankUser.password}).subscribe(data => {
       //console.log("test");
       console.log(data);
+      this.router.navigate(['/account-list']);
     });
   }
 }

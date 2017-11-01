@@ -5,17 +5,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { FormulaireComponent } from './formulaire/formulaire.component';
+import { LoginComponent } from './login/login.component';
 import { ErrorPageComponent } from './error-page/error-page.component';
+import { AccountListComponent } from './account-list/account-list.component';
 
 import { AppRoutingModule }     from './app-routing.module';
-
 
 @NgModule({
   declarations: [
     AppComponent,
-    FormulaireComponent,
-    ErrorPageComponent
+    LoginComponent,
+    ErrorPageComponent,
+    AccountListComponent
   ],
   imports: [
     BrowserModule,
