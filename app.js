@@ -1,14 +1,17 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+var bodyParser = require('body-parser');
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
-});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/api/lol', function(req, res) {
-  res.send('ça fait plais');
-});
+
+/* routes declarations */
+const login = require('./routes/login');
+
+/* lets use the routes now */
+app.use('/api/login', login);
 
 app.listen(3000, function () {
   console.log('API server listening on port 3000!');
