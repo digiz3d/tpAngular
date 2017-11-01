@@ -6,8 +6,7 @@ router.post('/', function(req, res){
     res.send({
         'status': "OK",
         'token' : randomstring.generate(64),
-        'body': req.body,
-        'test': 'ah'
+        'body': req.body
     });
 });
 
