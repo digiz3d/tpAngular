@@ -1,0 +1,16 @@
+<table>
+  <thead>
+    <tr>
+      <th>Intitulé</th>
+      <th>Solde</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let transaction of transactions">
+      <td>{{ transaction.value }}</td>
+      <td>{{ transaction.message }}</td>
+      <td>{{ transaction.date | date:'short'}}</td>
+    </tr>
+  </tbody>
+</table>

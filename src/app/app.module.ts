@@ -10,13 +10,15 @@ import { ErrorPageComponent } from './error-page/error-page.component';
 import { AccountListComponent } from './account-list/account-list.component';
 
 import { AppRoutingModule }     from './app-routing.module';
+import { AccountDetailComponent } from './account-detail/account-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     ErrorPageComponent,
-    AccountListComponent
+    AccountListComponent,
+    AccountDetailComponent
   ],
   imports: [
     BrowserModule,

@@ -6,9 +6,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let bankAccount of bankAccounts">
-      <td>{{ bankAccount.name }}</td>
-      <td>{{ bankAccount.balance }}</td>
+    <tr *ngFor="let account of accounts" [routerLink]="['/account-detail', account.id]">
+      <td>{{ account.name }}</td>
+      <td>{{ account.balance }}</td>
     </tr>
   </tbody>
 </table>
