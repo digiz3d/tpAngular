@@ -5,6 +5,11 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
+const mongoose = require('mongoose');
+const User = require('./app/models/user');
+const Account = require('./app/models/account');
+const Transaction = require('./app/models/transaction');
+mongoose.connect(config.database);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -15,12 +20,14 @@ const apiRoutes = express.Router();
 
 
 apiRoutes.get('/', function (req, res) {
-  res.json({ message: 'Welcome to our API. Please authenticate using POST name and password at /api/authenticate' });
+  res.send({
+    message: 'Welcome to our API. Please authenticate using POST name and password at /api/authenticate'
+  });
 });
 
-apiRoutes.post('/authenticate', function(req, res) {
+apiRoutes.post('/authenticate', function (req, res) {
   if (req.body.login === 'test' && req.body.password === 'test') {
-    let token = jwt.sign({ login: 'test' }, config.jwtSecret, {expiresIn: 60 * 60});
+    let token = jwt.sign({ login: 'test' }, config.jwtSecret, { expiresIn: 60 * 60 });
 
     res.cookie('token', token);
     res.send({
@@ -30,40 +37,40 @@ apiRoutes.post('/authenticate', function(req, res) {
     });
   }
   else {
-      res.send({
-        "code": 400,
-        "failed": "error ocurred"
+    res.send({
+      success: false,
+      message: "no no no"
     });
   }
 });
 
 apiRoutes.use(function (req, res, next) {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies["token"];
+  var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies.token;
 
   if (token) {
-      jwt.verify(token, config.jwtSecret, function (err, decoded) {
-          if (err) {
-              return res.json({ success: false, message: 'Failed to authenticate token.' });
-          } else {
-              req.decoded = decoded;
-              next();
-          }
-      });
+    jwt.verify(token, config.jwtSecret, function (err, decoded) {
+      if (err) {
+        return res.json({ success: false, message: 'Failed to authenticate token.' });
+      } else {
+        req.decoded = decoded;
+        next();
+      }
+    });
   }
   else {
-      return res.status(403).send({
-          success: false,
-          message: 'No token provided.'
-      });
+    return res.status(403).send({
+      success: false,
+      message: 'No token provided.'
+    });
   }
 });
 
-apiRoutes.get('/accounts', function(req, res) {
+apiRoutes.get('/accounts', function (req, res) {
   res.send([
-    {id: 1, name: 'Compte courant', amount: 8000, user: 69},
-    {id: 2, name:'Compte PEL',  amount: 35000, user: 69},
-    {id: 3, name:'Livret A',  amount: 2500, user: 69},
-    {id: 4, name:'Compte pro suise',  amount: 15000, user: 69}
+    { id: 1, name: 'Compte courant', amount: 8000, user: 69 },
+    { id: 2, name: 'Compte PEL', amount: 35000, user: 69 },
+    { id: 3, name: 'Livret A', amount: 2500, user: 69 },
+    { id: 4, name: 'Compte pro suisse', amount: 15000, user: 69 }
   ]);
 });
 
