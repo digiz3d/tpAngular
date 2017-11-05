@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    this.http.post('/api/login', {login: this.bankUser.login, password: this.bankUser.password}).subscribe(data => {
+    this.http.post('/api/authenticate', {login: this.bankUser.login, password: this.bankUser.password}).subscribe(data => {
       //console.log("test");
       console.log(data);
       this.router.navigate(['/account-list']);

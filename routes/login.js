@@ -27,23 +27,23 @@ router.post('/', function (req, res) {
         } else {
             if (rows.length > 0) {
                 //Compare passwords with bCrypt
-                bCryt.compare(req.body.password, rows[0].password , function (errorBCrypt, resultBCryt){                    
-                    if(errorBCrypt){
+                bCryt.compare(req.body.password, rows[0].password, function (errorBCrypt, resultBCryt) {
+                    if (errorBCrypt) {
                         //not connected
                         res.send({
                             "code": 403,
                             "success": "An error has occured"
                         });
                     }
-                    else{
-                        if(resultBCryt){
+                    else {
+                        if (resultBCryt) {
                             //Connected
                             res.send({
                                 "code": 200,
                                 "success": "login sucessfull"
                             });
                         }
-                        else{
+                        else {
                             //Non result
                             res.send({
                                 "code": 403,
@@ -51,7 +51,7 @@ router.post('/', function (req, res) {
                             });
                         }
                     }
-                })              
+                })
             }
             else {
                 res.send({
@@ -73,11 +73,3 @@ router.post('/', function (req, res) {
 });
 
 module.exports = router;
-
-
-
-
-
-
-
-

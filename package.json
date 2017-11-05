@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"nodemon app.js --watch\" \"ng serve --port 80 --proxy-config proxy.config.json\"",
+    "start": "concurrently \"nodemon api.js --watch\" \"ng serve --port 80 --proxy-config proxy.config.json\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -27,6 +27,7 @@
     "cookie-parser": "^1.4.3",
     "core-js": "^2.4.1",
     "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.0",
     "mysql": "^2.15.0",
     "nodemon": "^1.12.1",
     "randomstring": "^1.1.5",
