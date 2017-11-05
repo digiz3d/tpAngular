@@ -49,7 +49,7 @@ apiRoutes.post('/authenticate', function (req, res) {
         }
         else {
           if (result) {
-            let token = jwt.sign({ login: user.login }, config.jwtSecret, { expiresIn: 60 * 60 });
+            let token = jwt.sign({ id: user.id, login: user.login }, config.jwtSecret, { expiresIn: 60 * 60 });
             res.cookie('token', token);
             res.send({
               success: true,
@@ -65,34 +65,18 @@ apiRoutes.post('/authenticate', function (req, res) {
       });
     }
   });
-
-  /*
-  if (req.body.login === 'test' && req.body.password === 'test') {
-    let token = jwt.sign({ login: 'test' }, config.jwtSecret, { expiresIn: 60 * 60 });
-
-    res.cookie('token', token);
-    res.send({
-      success: true,
-      message: 'Enjoy your token',
-      token: token
-    });
-  }
-  else {
-    res.send({
-      success: false,
-      message: "no no no"
-    });
-  }
-  */
 });
 
 apiRoutes.use(function (req, res, next) {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies.token;
+  let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies.token;
 
   if (token) {
     jwt.verify(token, config.jwtSecret, function (err, decoded) {
       if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
+        return res.send({
+          success: false,
+          message: 'Failed to authenticate token.'
+        });
       } else {
         req.decoded = decoded;
         next();
@@ -108,12 +92,9 @@ apiRoutes.use(function (req, res, next) {
 });
 
 apiRoutes.get('/accounts', function (req, res) {
-  res.send([
-    { id: 1, name: 'Compte courant', amount: 8000, user: 69 },
-    { id: 2, name: 'Compte PEL', amount: 35000, user: 69 },
-    { id: 3, name: 'Livret A', amount: 2500, user: 69 },
-    { id: 4, name: 'Compte pro suisse', amount: 15000, user: 69 }
-  ]);
+  Account.find({ owner: req.decoded.id}, function (err, accs) {
+    res.send(accs);
+  });
 });
 
 /* lets use the routes now */

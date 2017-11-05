@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 export class AccountListComponent implements OnInit {
   accounts:BankAccount[];
   
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.accounts = [new BankAccount(1, 'Compte courant', 8000, 69),
