@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const User = require('./app/models/user');
 const Account = require('./app/models/account');
 const Transaction = require('./app/models/transaction');
@@ -26,6 +27,46 @@ apiRoutes.get('/', function (req, res) {
 });
 
 apiRoutes.post('/authenticate', function (req, res) {
+  /*
+  bcrypt.hash(req.body.password, 10, function(err, hashed){
+    res.send({
+      success: false,
+      hashedpass: hashed
+    });
+  });
+  */
+
+  User.findOne({ login: req.body.login }, function (err, user) {
+    if (err) throw err;
+
+    if (!user) {
+      res.json({ success: false, message: 'Authentication failed. User not found.' });
+    }
+    else if (user) {
+      bcrypt.compare(req.body.password, user.password, function (err, result) {
+        if (err) {
+          res.status(500).send(err.message);
+        }
+        else {
+          if (result) {
+            let token = jwt.sign({ login: user.login }, config.jwtSecret, { expiresIn: 60 * 60 });
+            res.cookie('token', token);
+            res.send({
+              success: true,
+              message: 'Enjoy your token!',
+              token: token
+            });
+
+          }
+          else {
+            res.status(401).send({ success: false, message: 'Wrong username or password' });
+          }
+        }
+      });
+    }
+  });
+
+  /*
   if (req.body.login === 'test' && req.body.password === 'test') {
     let token = jwt.sign({ login: 'test' }, config.jwtSecret, { expiresIn: 60 * 60 });
 
@@ -42,6 +83,7 @@ apiRoutes.post('/authenticate', function (req, res) {
       message: "no no no"
     });
   }
+  */
 });
 
 apiRoutes.use(function (req, res, next) {
