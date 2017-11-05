@@ -8,7 +8,7 @@
   <tbody>
     <tr *ngFor="let account of accounts" [routerLink]="['/account-detail', account.id]">
       <td>{{ account.name }}</td>
-      <td>{{ account.balance }}</td>
+      <td>{{ account.value }}</td>
     </tr>
   </tbody>
 </table>

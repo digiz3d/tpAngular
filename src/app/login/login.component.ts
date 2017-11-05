@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BankUser } from '../models/BankUser';
+import { BankUser } from '../../models/BankUser';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
 
   bankUser:BankUser = new BankUser();
-  
+
   constructor(
     private router: Router,
     private http: HttpClient) { }

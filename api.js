@@ -97,6 +97,22 @@ apiRoutes.get('/accounts', function (req, res) {
   });
 });
 
+apiRoutes.get('/transactions/:bankAccountId', function (req, res) {
+  Account.findOne({ owner: req.decoded.id, _id: req.params.bankAccountId }, function (err, acc) {
+    if (err) throw err;
+    
+    if (acc) {
+      Transaction.find({ account: acc._id}, function (err2, trs) {
+        res.send(trs);
+      });
+    }
+    else {
+      res.send({});
+    }
+  });
+});
+
+
 /* lets use the routes now */
 app.use('/api', apiRoutes);
 

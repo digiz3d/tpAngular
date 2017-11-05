@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BankAccount } from '../models/BankAccount';
+import { BankAccount } from '../../models/BankAccount';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -8,15 +8,25 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./account-list.component.css']
 })
 export class AccountListComponent implements OnInit {
-  accounts:BankAccount[];
+  accounts:BankAccount[] = [];
   
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.accounts = [new BankAccount(1, 'Compte courant', 8000, 69),
-    new BankAccount(2, 'Compte PEL', 35000, 69),
-    new BankAccount(3, 'Livret A', 2500, 69),
-    new BankAccount(4, 'Compte pro suise', 15000, 69)];
+    this.http.get('/api/accounts').subscribe(data => {
+
+      let i = 0;
+      while(data[i]) {
+        this.accounts.push(new BankAccount(
+            data[i]['_id'],
+            data[i]['name'],
+            data[i]['value'],
+            data[i]['owner']
+        ));
+        i++;
+      }
+      
+    });
   }
 
 }

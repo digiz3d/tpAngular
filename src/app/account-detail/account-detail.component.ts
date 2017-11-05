@@ -1,7 +1,7 @@
 import 'rxjs/add/operator/switchMap';
 import { Component, OnInit } from '@angular/core';
-import { BankAccount } from '../models/BankAccount';
-import { BankTransaction } from '../models/BankTransaction';
+import { BankAccount } from '../../models/BankAccount';
+import { BankTransaction } from '../../models/BankTransaction';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -11,18 +11,27 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./account-detail.component.css']
 })
 export class AccountDetailComponent implements OnInit {
-  account:BankAccount;
-  transactions:BankTransaction[];
-  constructor(private route: ActivatedRoute) {}
+  account: BankAccount;
+  transactions: BankTransaction[] = [];
+
+  constructor(private route: ActivatedRoute, private http: HttpClient) { }
 
   ngOnInit() {
-    this.account = new BankAccount(1, "default", 15000, 1);
-
-    this.transactions = [
-      new BankTransaction(1,  1300, 'September Pay',  new Date(), 1),
-      new BankTransaction(2,  -150, 'Restaurant',     new Date(), 1),
-      new BankTransaction(3,  1350, 'August Pay',     new Date(), 1),
-      new BankTransaction(4,  1300, 'July Pay',       new Date(), 1)
-    ];
+    this.route.params.subscribe(params => {
+      this.account = new BankAccount(params['id'], "default", 15000, "1");
+      this.http.get('/api/transactions/' + this.account.id).subscribe(data => {
+        let i = 0;
+        while (data[i]) {
+          this.transactions.push(new BankTransaction(
+            data[i]['_id'],
+            data[i]['value'],
+            data[i]['message'],
+            data[i]['date'],
+            data[i]['account']
+          ));
+          i++;
+        }
+      });
+    });
   }
 }
