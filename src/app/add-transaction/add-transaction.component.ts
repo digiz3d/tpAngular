@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { BankAccount } from '../../models/BankAccount';
@@ -10,6 +10,8 @@ import { BankTransaction } from '../../models/BankTransaction';
   styleUrls: ['./add-transaction.component.css']
 })
 export class AddTransactionComponent implements OnInit {
+  @Output() transactionAdded = new EventEmitter();
+
   account: BankAccount;
   transaction:BankTransaction = new BankTransaction("", 0, "", new Date(), "");
 
@@ -23,7 +25,13 @@ export class AddTransactionComponent implements OnInit {
 
   onSubmit() {
     this.http.post('/api/transactions/'+this.account.id, {value: this.transaction.value, message: this.transaction.message}).subscribe(data => {
-      console.log("transaction added !");
+      if (data['success']) {
+        console.log("transaction added !");
+        this.transactionAdded.emit(data['transaction']);
+      }
+      else {
+        console.log("transaction failed !");
+      }
     });
   }
 }

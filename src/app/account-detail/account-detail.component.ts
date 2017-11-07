@@ -34,4 +34,10 @@ export class AccountDetailComponent implements OnInit {
       });
     });
   }
+
+  addTransaction(transaction:BankTransaction) {
+    console.log("addTransaction");
+    console.log(transaction);
+    this.transactions.push(transaction);
+  }
 }

@@ -117,17 +117,10 @@ apiRoutes.post('/transactions/:bankAccountId', function(req, res) {
     if (err) throw err;
     
     if (acc) {
-      /*
-      Transaction.find({ account: acc._id}, function(err2, trs) {
-        res.send(trs);
-      });
-      */
       let transaction = new Transaction({value: req.body.value, message: req.body.message, date: Date.now(), account: mongoose.Types.ObjectId(req.params.bankAccountId)});
       transaction.save(function (err) {
         if (err) throw err;
-
-        console.log('Transaction saved successfully');
-        res.json({ success: true });
+          res.json({ success: true, transaction: transaction});
       });
     }
     else {
