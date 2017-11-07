@@ -97,12 +97,12 @@ apiRoutes.get('/accounts', function (req, res) {
   });
 });
 
-apiRoutes.get('/transactions/:bankAccountId', function (req, res) {
+apiRoutes.get('/transactions/:bankAccountId', function(req, res) {
   Account.findOne({ owner: req.decoded.id, _id: req.params.bankAccountId }, function (err, acc) {
     if (err) throw err;
     
     if (acc) {
-      Transaction.find({ account: acc._id}, function (err2, trs) {
+      Transaction.find({ account: acc._id}, function(err2, trs) {
         res.send(trs);
       });
     }
@@ -112,6 +112,29 @@ apiRoutes.get('/transactions/:bankAccountId', function (req, res) {
   });
 });
 
+apiRoutes.post('/transactions/:bankAccountId', function(req, res) {
+  Account.findOne({ owner: req.decoded.id, _id: req.params.bankAccountId }, function (err, acc) {
+    if (err) throw err;
+    
+    if (acc) {
+      /*
+      Transaction.find({ account: acc._id}, function(err2, trs) {
+        res.send(trs);
+      });
+      */
+      let transaction = new Transaction({value: req.body.value, message: req.body.message, date: Date.now(), account: mongoose.Types.ObjectId(req.params.bankAccountId)});
+      transaction.save(function (err) {
+        if (err) throw err;
+
+        console.log('Transaction saved successfully');
+        res.json({ success: true });
+      });
+    }
+    else {
+      res.json({});
+    }
+  });
+});
 
 /* lets use the routes now */
 app.use('/api', apiRoutes);

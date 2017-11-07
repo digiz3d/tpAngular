@@ -1,9 +1,9 @@
 import 'rxjs/add/operator/switchMap';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { BankAccount } from '../../models/BankAccount';
 import { BankTransaction } from '../../models/BankTransaction';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-account-detail',
@@ -18,7 +18,7 @@ export class AccountDetailComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.account = new BankAccount(params['id'], "default", 15000, "1");
+      this.account = new BankAccount(params['id'], "", 0, "");
       this.http.get('/api/transactions/' + this.account.id).subscribe(data => {
         let i = 0;
         while (data[i]) {

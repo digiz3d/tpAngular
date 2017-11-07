@@ -11,6 +11,7 @@ import { AccountListComponent } from './account-list/account-list.component';
 
 import { AppRoutingModule }     from './app-routing.module';
 import { AccountDetailComponent } from './account-detail/account-detail.component';
+import { AddTransactionComponent } from './add-transaction/add-transaction.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { AccountDetailComponent } from './account-detail/account-detail.componen
     LoginComponent,
     ErrorPageComponent,
     AccountListComponent,
-    AccountDetailComponent
+    AccountDetailComponent,
+    AddTransactionComponent
   ],
   imports: [
     BrowserModule,
