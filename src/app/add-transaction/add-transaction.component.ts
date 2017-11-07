@@ -28,6 +28,8 @@ export class AddTransactionComponent implements OnInit {
       if (data['success']) {
         console.log("transaction added !");
         this.transactionAdded.emit(data['transaction']);
+
+        
       }
       else {
         console.log("transaction failed !");

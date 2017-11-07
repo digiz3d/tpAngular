@@ -10,6 +10,8 @@ const bcrypt = require('bcrypt');
 const User = require('./app/models/user');
 const Account = require('./app/models/account');
 const Transaction = require('./app/models/transaction');
+const nodeMailer = require('nodemailer');
+
 mongoose.connect(config.database);
 
 app.use(bodyParser.json());
@@ -49,7 +51,7 @@ apiRoutes.post('/authenticate', function (req, res) {
         }
         else {
           if (result) {
-            let token = jwt.sign({ id: user.id, login: user.login }, config.jwtSecret, { expiresIn: 60 * 60 });
+            let token = jwt.sign({ id: user.id, login: user.login, email:user.email }, config.jwtSecret, { expiresIn: 60 * 60 });
             res.cookie('token', token);
             res.send({
               success: true,
@@ -92,17 +94,17 @@ apiRoutes.use(function (req, res, next) {
 });
 
 apiRoutes.get('/accounts', function (req, res) {
-  Account.find({ owner: req.decoded.id}, function (err, accs) {
+  Account.find({ owner: req.decoded.id }, function (err, accs) {
     res.send(accs);
   });
 });
 
-apiRoutes.get('/transactions/:bankAccountId', function(req, res) {
+apiRoutes.get('/transactions/:bankAccountId', function (req, res) {
   Account.findOne({ owner: req.decoded.id, _id: req.params.bankAccountId }, function (err, acc) {
     if (err) throw err;
-    
+
     if (acc) {
-      Transaction.find({ account: acc._id}, function(err2, trs) {
+      Transaction.find({ account: acc._id }, function (err2, trs) {
         res.send(trs);
       });
     }
@@ -112,15 +114,30 @@ apiRoutes.get('/transactions/:bankAccountId', function(req, res) {
   });
 });
 
-apiRoutes.post('/transactions/:bankAccountId', function(req, res) {
+apiRoutes.post('/transactions/:bankAccountId', function (req, res) {
   Account.findOne({ owner: req.decoded.id, _id: req.params.bankAccountId }, function (err, acc) {
     if (err) throw err;
-    
+
     if (acc) {
-      let transaction = new Transaction({value: req.body.value, message: req.body.message, date: Date.now(), account: mongoose.Types.ObjectId(req.params.bankAccountId)});
+      let transaction = new Transaction({ value: req.body.value, message: req.body.message, date: Date.now(), account: mongoose.Types.ObjectId(req.params.bankAccountId) });
       transaction.save(function (err) {
         if (err) throw err;
-          res.json({ success: true, transaction: transaction});
+        res.json({ success: true, transaction: transaction });
+
+        //Get user email
+        var userMail = req.decoded.email;
+
+        //Create transporter and message
+        var transporter = nodeMailer.createTransport(config.mailConfig);
+        var message = {
+          from: 'ApiAirbnbLike@outlook.com',
+          to: userMail,
+          subject: "New transaction added",
+          text: "You've just added a new transaction : " + req.body.value + "€, \"" + req.body.message + "\"",
+        };
+
+        //Send mail to user
+        transporter.sendMail(message);
       });
     }
     else {
