@@ -23,7 +23,7 @@ const apiRoutes = express.Router();
 
 
 apiRoutes.get('/', function (req, res) {
-  res.send({
+  res.json({
     message: 'Welcome to our API. Please authenticate using POST name and password at /api/authenticate'
   });
 });
@@ -47,13 +47,13 @@ apiRoutes.post('/authenticate', function (req, res) {
     else if (user) {
       bcrypt.compare(req.body.password, user.password, function (err, result) {
         if (err) {
-          res.status(500).send(err.message);
+          res.status(500).json({success: false, message: err.message});
         }
         else {
           if (result) {
             let token = jwt.sign({ id: user.id, login: user.login, email:user.email }, config.jwtSecret, { expiresIn: 60 * 60 });
             res.cookie('token', token);
-            res.send({
+            res.json({
               success: true,
               message: 'Enjoy your token!',
               token: token
@@ -61,7 +61,7 @@ apiRoutes.post('/authenticate', function (req, res) {
 
           }
           else {
-            res.status(401).send({ success: false, message: 'Wrong username or password' });
+            res.status(401).json({ success: false, message: 'Wrong username or password' });
           }
         }
       });
@@ -75,7 +75,7 @@ apiRoutes.use(function (req, res, next) {
   if (token) {
     jwt.verify(token, config.jwtSecret, function (err, decoded) {
       if (err) {
-        return res.send({
+        return res.json({
           success: false,
           message: 'Failed to authenticate token.'
         });
@@ -86,7 +86,7 @@ apiRoutes.use(function (req, res, next) {
     });
   }
   else {
-    return res.status(403).send({
+    return res.status(403).json({
       success: false,
       message: 'No token provided.'
     });
@@ -95,7 +95,29 @@ apiRoutes.use(function (req, res, next) {
 
 apiRoutes.get('/accounts', function (req, res) {
   Account.find({ owner: req.decoded.id }, function (err, accs) {
-    res.send(accs);
+    res.json(accs);
+  });
+});
+
+apiRoutes.get('/accounts/:id', function (req, res) {
+  Account.findOne({ _id: req.params.id, owner: req.decoded.id}, function (err, acc) {
+    res.json(acc);
+  });
+});
+
+apiRoutes.post('/accounts', function(req, res) {
+  if (req.body.value < 0) {
+    return res.json({ success: false, message: "Negative amount not allowed." });
+  }
+  if (req.body.name.trim() == "") {
+    return res.json({ success: false, message: "An account needs a name omg." });
+  }
+  
+  let account = new Account({name: req.body.name, value: req.body.value, owner: mongoose.Types.ObjectId(req.decoded.id)});
+  account.save(function(err) {
+    if (err) throw err;
+
+    res.json({ success: true });
   });
 });
 
@@ -105,16 +127,20 @@ apiRoutes.get('/transactions/:bankAccountId', function (req, res) {
 
     if (acc) {
       Transaction.find({ account: acc._id }, function (err2, trs) {
-        res.send(trs);
+        res.json(trs);
       });
     }
     else {
-      res.send({});
+      res.json({success: false});
     }
   });
 });
 
 apiRoutes.post('/transactions/:bankAccountId', function (req, res) {
+  if (req.body.message.trim() == "") {
+    return res.json({ success: false, message: "An account needs a name omg." });
+  }
+
   Account.findOne({ owner: req.decoded.id, _id: req.params.bankAccountId }, function (err, acc) {
     if (err) throw err;
 
@@ -122,7 +148,13 @@ apiRoutes.post('/transactions/:bankAccountId', function (req, res) {
       let transaction = new Transaction({ value: req.body.value, message: req.body.message, date: Date.now(), account: mongoose.Types.ObjectId(req.params.bankAccountId) });
       transaction.save(function (err) {
         if (err) throw err;
-        res.json({ success: true, transaction: transaction });
+
+        acc.value += transaction.value;
+        acc.save(function(err2) {
+          if (err2) throw err2;
+
+          res.json({ success: true, transaction: transaction });
+        });
 
         //Get user email
         var userMail = req.decoded.email;
@@ -138,6 +170,7 @@ apiRoutes.post('/transactions/:bankAccountId', function (req, res) {
 
         //Send mail to user
         transporter.sendMail(message);
+
       });
     }
     else {

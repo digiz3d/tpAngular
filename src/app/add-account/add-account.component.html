@@ -1,0 +1,6 @@
+<h1>Create a new bank account</h1>
+<form (ngSubmit)="onSubmit()">
+  <input type="text" name="name" placeholder="name" [(ngModel)]="account.name" />
+  <input type="number" name="value" plahcolder="value" [(ngModel)]="account.value" />
+  <input type="submit" value="Create !"/>
+</form>
