@@ -1,5 +1,8 @@
 <form (ngSubmit)="onSubmit()">
-  <input type="text" name="login" [(ngModel)]="bankUser.login"/>
-  <input type="password" name="password" [(ngModel)]="bankUser.password"/>
-  <input type="submit" value="Connexion"/>  
+  <h1 align="center">Bienvenue sur Banking</h1>
+  <label>Veuillez vous identifier</label>
+  <br /><br />
+  <input type="text" name="login" [(ngModel)]="bankUser.login" />
+  <input type="password" name="password" [(ngModel)]="bankUser.password" />
+  <input type="submit" value="Connexion" />
 </form>
