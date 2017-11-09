@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 const User = require('./app/models/user');
 const Account = require('./app/models/account');
 const Transaction = require('./app/models/transaction');
-const nodeMailer = require('nodemailer');
+const mailer = require('./mailer');
 
 mongoose.connect(config.database);
 
@@ -118,6 +118,7 @@ apiRoutes.post('/accounts', function(req, res) {
     if (err) throw err;
 
     res.json({ success: true });
+    mailer.send(req.decoded.email, "New account created", "You've just created a new account : \"" + req.body.name + "\" with " + req.body.value + "€");
   });
 });
 
@@ -155,22 +156,8 @@ apiRoutes.post('/transactions/:bankAccountId', function (req, res) {
 
           res.json({ success: true, transaction: transaction });
         });
-
-        //Get user email
-        var userMail = req.decoded.email;
-
-        //Create transporter and message
-        var transporter = nodeMailer.createTransport(config.mailConfig);
-        var message = {
-          from: 'ApiAirbnbLike@outlook.com',
-          to: userMail,
-          subject: "New transaction added",
-          text: "You've just added a new transaction : " + req.body.value + "€, \"" + req.body.message + "\"",
-        };
-
-        //Send mail to user
-        transporter.sendMail(message);
-
+        
+        mailer.send(req.decoded.email, "New transaction added", "You've just added a new transaction : " + req.body.value + "€, \"" + req.body.message + "\"");
       });
     }
     else {
