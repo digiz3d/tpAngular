@@ -11,15 +11,19 @@ import { BankTransaction } from '../../models/BankTransaction';
   styleUrls: ['./account-detail.component.css']
 })
 export class AccountDetailComponent implements OnInit {
-  account: BankAccount;
+  account: BankAccount = new BankAccount("","", 0,"");
   transactions: BankTransaction[] = [];
 
   constructor(private route: ActivatedRoute, private http: HttpClient) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.account = new BankAccount(params['id'], "", 0, "");
-      this.http.get('/api/transactions/' + this.account.id).subscribe(data => {
+
+      this.http.get('/api/accounts/' + params["id"]).subscribe(data => {
+        this.account = new BankAccount(data["_id"], data["name"], data["value"], data["owner"]);
+      });
+
+      this.http.get('/api/transactions/' + params["id"]).subscribe(data => {
         let i = 0;
         while (data[i]) {
           this.transactions.push(new BankTransaction(

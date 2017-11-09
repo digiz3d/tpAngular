@@ -27,12 +27,10 @@ export class AddTransactionComponent implements OnInit {
     this.http.post('/api/transactions/'+this.account.id, {value: this.transaction.value, message: this.transaction.message}).subscribe(data => {
       if (data['success']) {
         console.log("transaction added !");
-        this.transactionAdded.emit(data['transaction']);
-
-        
+        this.transactionAdded.emit(data["transaction"]);
       }
       else {
-        console.log("transaction failed !");
+        alert("A transaction needs a label : "+ data["message"]);
       }
     });
   }
