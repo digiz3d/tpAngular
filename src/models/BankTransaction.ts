@@ -1,11 +1,11 @@
 export class BankTransaction {
-    id: String;
-    value: Number;
-    message: String;
+    id: string;
+    value: number;
+    message: string;
     date: Date;
-    account: String;
+    account: string;
     
-    constructor(id: String, value: Number, message:String, date:Date, account: String) {
+    constructor(id: string, value: number, message: string, date: Date, account: string) {
         this.id = id;
         this.value = value;
         this.message = message;

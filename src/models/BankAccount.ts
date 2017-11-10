@@ -1,10 +1,10 @@
 export class BankAccount {
-    id: String;
-    name: String;
-    value: Number;
-    owner: String;
+    id: string;
+    name: string;
+    value: number;
+    owner: string;
 
-    constructor(id: String, name: String, value: Number, owner: String) {
+    constructor(id: string, name: string, value: number, owner: string) {
         this.id = id;
         this.name = name;
         this.value = value;
